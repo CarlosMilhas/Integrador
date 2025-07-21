@@ -16,15 +16,15 @@ public class ProductService {
 
     private final IProductRepository myRepository;
 
-    public void saveProduct(Product product) {
-        myRepository.save(product);
+    public Product saveProduct(Product product) {
+        return myRepository.save(product);
     }
 
     public List<Product> findAllProducts() {
         return myRepository.findAll();
     }
 
-    public void updateProduct(Product product, long id) {
+    public Product updateProduct(Product product, long id) {
 
         Optional<Product> optionalProduct = myRepository.findById(id);
         if (optionalProduct.isPresent()) {
@@ -35,13 +35,17 @@ public class ProductService {
             existingProduct.setName(product.getName());
             existingProduct.setPrice(product.getPrice());
             existingProduct.setStock(product.getStock());
-            myRepository.save(existingProduct);
+            return myRepository.save(existingProduct);
         }
-
+        return null;
     }
 
-    public void deleteProduct(long id) {
-        myRepository.deleteById(id);
+    public boolean deleteProduct(long id) {
+        if (myRepository.existsById(id)) {
+            myRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 
     public Product findById(long id) {
