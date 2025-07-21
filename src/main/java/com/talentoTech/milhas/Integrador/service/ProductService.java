@@ -1,6 +1,7 @@
 package com.talentoTech.milhas.Integrador.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,27 @@ public class ProductService {
 
     public List<Product> findAllProducts() {
         return myRepository.findAll();
+    }
+
+    public void updateProduct(Product product, long id) {
+
+        Optional<Product> optionalProduct = myRepository.findById(id);
+        if (optionalProduct.isPresent()) {
+            Product existingProduct = optionalProduct.get();
+            existingProduct.setCategory(product.getCategory());
+            existingProduct.setDescription(product.getDescription());
+            existingProduct.setImageUrl(product.getImageUrl());
+            existingProduct.setName(product.getName());
+            existingProduct.setPrice(product.getPrice());
+            existingProduct.setStock(product.getStock());
+            myRepository.save(existingProduct);
+        }
+
+    }
+
+    public void deleteProduct(long id) {
+        myRepository.deleteById(id);
+
     }
 
 }
