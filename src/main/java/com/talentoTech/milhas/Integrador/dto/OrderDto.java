@@ -12,5 +12,4 @@ import lombok.NoArgsConstructor;
 public class OrderDto {
     private Long id;
     private List<OrderLineDto> orderLines;
-
 }

@@ -1,4 +1,4 @@
-# Product Management API - Integrador
+# Product Management & Order API - Integrador
 
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.3-brightgreen.svg)](https://spring.io/projects/spring-boot)
 [![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://openjdk.java.net/)
@@ -7,15 +7,17 @@
 
 ## 📋 Descripción
 
-**Integrador** es una API REST desarrollada con Spring Boot para la gestión de productos. Este proyecto forma parte del trabajo práctico integrador final para el curso de Talento Tech. La aplicación permite realizar operaciones CRUD (Crear, Leer, Actualizar, Eliminar) sobre productos a través de endpoints RESTful.
+**Integrador** es una API REST desarrollada con Spring Boot para la gestión de productos y órdenes. Este proyecto forma parte del trabajo práctico integrador final para el curso de Talento Tech. La aplicación permite realizar operaciones CRUD (Crear, Leer, Actualizar, Eliminar) sobre productos y gestionar órdenes con múltiples productos.
 
 ## 🚀 Características
 
-- ✅ **API REST completa** con operaciones CRUD
+- ✅ **API REST completa** con operaciones CRUD para productos y órdenes
 - ✅ **Respuestas HTTP apropiadas** con códigos de estado correctos
 - ✅ **Validación de datos** y manejo de errores
 - ✅ **Base de datos MySQL** con JPA/Hibernate
 - ✅ **Arquitectura en capas** (Controller, Service, Repository)
+- ✅ **DTOs especializados** para requests y responses
+- ✅ **Relaciones JPA** entre órdenes y productos
 - ✅ **Lombok** para reducir código boilerplate
 - ✅ **Spring Boot Actuator** para monitoreo
 - ✅ **H2 Database** configurada para desarrollo
@@ -63,6 +65,8 @@
 
 ### Ejemplos de Uso
 
+## 📱 PRODUCTOS
+
 #### 1. Crear un nuevo producto
 
 ```bash
@@ -91,7 +95,13 @@ GET /products
 GET /products/1
 ```
 
-#### 4. Actualizar un producto
+#### 4. Buscar productos por nombre
+
+```bash
+GET /products/name/Samsung
+```
+
+#### 5. Actualizar un producto (partial update)
 
 ```bash
 PUT /products/1
@@ -99,18 +109,81 @@ Content-Type: application/json
 
 {
   "name": "Smartphone Samsung Galaxy S24",
-  "description": "Última generación con IA",
   "price": 899.99,
-  "category": "Electrónicos",
-  "imageUrl": "https://ejemplo.com/samsung-s24.jpg",
   "stock": 30
 }
 ```
 
-#### 5. Eliminar un producto
+#### 6. Eliminar un producto
 
 ```bash
 DELETE /products/1
+```
+
+## 🛒 ÓRDENES
+
+#### 1. Crear una nueva orden
+
+```bash
+POST /orders
+Content-Type: application/json
+
+{
+  "orderLines": [
+    {
+      "productId": 1,
+      "quantity": 2
+    },
+    {
+      "productId": 2,
+      "quantity": 1
+    }
+  ]
+}
+```
+
+**Respuesta:**
+
+```json
+{
+  "id": 1,
+  "orderLines": [
+    {
+      "id": 1,
+      "productId": 1,
+      "productName": "Smartphone Samsung",
+      "productPrice": 599.99,
+      "quantity": 2,
+      "subtotal": 1199.98
+    },
+    {
+      "id": 2,
+      "productId": 2,
+      "productName": "Laptop Dell",
+      "productPrice": 1299.99,
+      "quantity": 1,
+      "subtotal": 1299.99
+    }
+  ]
+}
+```
+
+#### 2. Obtener todas las órdenes
+
+```bash
+GET /orders
+```
+
+#### 3. Obtener una orden específica
+
+```bash
+GET /orders/1
+```
+
+#### 4. Eliminar una orden
+
+```bash
+DELETE /orders/1
 ```
 
 ## ⚙️ Configuración y Instalación
@@ -196,52 +269,34 @@ src/
 ├── main/
 │   ├── java/
 │   │   └── com/talentoTech/milhas/Integrador/
-│   │       ├── IntegradorApplication.java      # Clase principal
+│   │       ├── IntegradorApplication.java          # Clase principal
 │   │       ├── controller/
-│   │       │   └── ProductController.java      # Controlador REST
+│   │       │   ├── ProductController.java          # Controlador REST - Productos
+│   │       │   └── OrderController.java            # Controlador REST - Órdenes
 │   │       ├── service/
-│   │       │   └── ProductService.java         # Lógica de negocio
+│   │       │   ├── ProductService.java             # Lógica de negocio - Productos
+│   │       │   └── OrderService.java               # Lógica de negocio - Órdenes
 │   │       ├── repository/
-│   │       │   └── IProductRepository.java     # Acceso a datos
-│   │       └── model/
-│   │           └── Product.java                # Entidad JPA
+│   │       │   ├── IProductRepository.java         # Acceso a datos - Productos
+│   │       │   └── IOrderRepository.java           # Acceso a datos - Órdenes
+│   │       ├── model/
+│   │       │   ├── Product.java                    # Entidad JPA - Producto
+│   │       │   ├── Order.java                      # Entidad JPA - Orden
+│   │       │   └── OrderLine.java                  # Entidad JPA - Línea de Orden
+│   │       ├── dto/
+│   │       │   ├── ProductDto.java                 # DTO - Producto
+│   │       │   ├── OrderDto.java                   # DTO - Orden (Response)
+│   │       │   ├── OrderCreateDto.java             # DTO - Crear Orden (Request)
+│   │       │   ├── OrderLineDto.java               # DTO - Línea de Orden (Response)
+│   │       │   └── OrderLineCreateDto.java         # DTO - Crear Línea (Request)
+│   │       └── exceptions/
+│   │           └── NoStockException.java           # Excepción personalizada
 │   └── resources/
-│       ├── application.properties              # Configuración
-│       ├── static/                            # Archivos estáticos
-│       └── templates/                         # Plantillas
+│       ├── application.properties                  # Configuración
+│       ├── static/                                # Archivos estáticos
+│       └── templates/                             # Plantillas
 └── test/
-    └── java/                                  # Tests unitarios
-```
-
-## 🧪 Testing
-
-### Ejecutar tests
-
-```bash
-./mvnw test
-```
-
-### Testing manual con cURL
-
-#### Crear producto:
-
-```bash
-curl -X POST http://localhost:8080/products \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Laptop Dell",
-    "description": "Laptop para desarrollo",
-    "price": 1299.99,
-    "category": "Computadoras",
-    "imageUrl": "https://ejemplo.com/dell.jpg",
-    "stock": 25
-  }'
-```
-
-#### Obtener productos:
-
-```bash
-curl -X GET http://localhost:8080/products
+    └── java/                                      # Tests unitarios
 ```
 
 ## 🚀 Deployment
@@ -304,4 +359,4 @@ Si tienes alguna pregunta o problema:
 
 ---
 
-**¡Gracias por usar Product Management API!** 🎉
+**¡Gracias por usar Product Management & Order API!** 🎉

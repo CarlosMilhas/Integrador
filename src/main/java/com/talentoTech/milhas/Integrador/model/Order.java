@@ -28,7 +28,4 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OrderLine> orderLines;
 
-    @OneToMany(mappedBy = "order")
-    List<OrderLine> products;
-
 }

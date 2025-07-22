@@ -27,11 +27,17 @@ public class ProductController {
     private final ProductService myService;
 
     @PostMapping()
-    public ResponseEntity<ProductDto> saveProduct(@RequestBody Product product) {
+    public ResponseEntity<ProductDto> saveProduct(@RequestBody ProductDto productDto) throws NoStockException {
+        // Convert DTO to Entity for service layer
+        Product product = new Product();
+        product.setName(productDto.getName());
+        product.setPrice(productDto.getPrice());
+        product.setStock(productDto.getStock());
+
         Product savedProduct = myService.saveProduct(product);
-        ProductDto productDTO = new ProductDto(savedProduct.getId(), savedProduct.getName(), savedProduct.getPrice(),
-                savedProduct.getStock());
-        return ResponseEntity.status(HttpStatus.CREATED).body(productDTO);
+        ProductDto responseDTO = new ProductDto(savedProduct.getId(), savedProduct.getName(),
+                savedProduct.getPrice(), savedProduct.getStock());
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
     @GetMapping()

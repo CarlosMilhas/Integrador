@@ -60,10 +60,7 @@ public class ProductService {
     }
 
     public List<Product> findByName(String name) {
-        if (myRepository.findByName(name) != null) {
-            return myRepository.findByName(name);
-        }
-        return null;
-
+        List<Product> products = myRepository.findByName(name);
+        return products.isEmpty() ? null : products;
     }
 }
