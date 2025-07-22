@@ -58,16 +58,3 @@ bash
 
     mvn spring-boot:run
 
-📦 Estructura del proyecto
-text
-
-src/
-├── main/
-│ ├── java/
-│ │ ├── controller/ # Controladores REST
-│ │ ├── model/ # Entidades JPA
-│ │ ├── repository/ # Repositorios Spring Data
-│ │ ├── service/ # Lógica de negocio
-│ │ └── dto/ # Objetos de transferencia
-│ └── resources/ # Configuraciones
-└── test/ # Pruebas unitarias
