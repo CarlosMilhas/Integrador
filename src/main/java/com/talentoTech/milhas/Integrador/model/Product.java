@@ -1,5 +1,7 @@
 package com.talentoTech.milhas.Integrador.model;
 
+import com.talentoTech.milhas.Integrador.exceptions.NoStockException;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -18,9 +20,15 @@ public class Product {
     private long id;
 
     private String name;
-    private String description;
+
     private double price;
-    private String category;
-    private String imageUrl;
+
     private int stock;
+
+    public void setStock(int stock) throws NoStockException {
+        if (stock < 0) {
+            throw new NoStockException("Stock insuficiente");
+        }
+        this.stock = stock;
+    }
 }

@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.talentoTech.milhas.Integrador.dto.ProductDto;
+import com.talentoTech.milhas.Integrador.exceptions.NoStockException;
 import com.talentoTech.milhas.Integrador.model.Product;
 import com.talentoTech.milhas.Integrador.service.ProductService;
 
@@ -25,31 +27,54 @@ public class ProductController {
     private final ProductService myService;
 
     @PostMapping()
-    public ResponseEntity<Product> saveProduct(@RequestBody Product product) {
+    public ResponseEntity<ProductDto> saveProduct(@RequestBody Product product) {
         Product savedProduct = myService.saveProduct(product);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
+        ProductDto productDTO = new ProductDto(savedProduct.getId(), savedProduct.getName(), savedProduct.getPrice(),
+                savedProduct.getStock());
+        return ResponseEntity.status(HttpStatus.CREATED).body(productDTO);
     }
 
     @GetMapping()
-    public ResponseEntity<List<Product>> findAllProducts() {
+    public ResponseEntity<List<ProductDto>> findAllProducts() {
         List<Product> products = myService.findAllProducts();
-        return ResponseEntity.ok(products);
+        List<ProductDto> productDTOs = products.stream()
+                .map(p -> new ProductDto(p.getId(), p.getName(), p.getPrice(), p.getStock()))
+                .toList();
+        return ResponseEntity.ok(productDTOs);
+
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> findProductById(@PathVariable long id) {
+    public ResponseEntity<ProductDto> findProductById(@PathVariable long id) {
         Product product = myService.findById(id);
         if (product != null) {
-            return ResponseEntity.ok(product);
+            ProductDto productDTO = new ProductDto(product.getId(), product.getName(), product.getPrice(),
+                    product.getStock());
+            return ResponseEntity.ok(productDTO);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/name/{name}")
+    public ResponseEntity<List<ProductDto>> findProductByName(@PathVariable String name) {
+        List<Product> products = myService.findByName(name);
+        if (products != null) {
+            List<ProductDto> productDTOs = products.stream()
+                    .map(p -> new ProductDto(p.getId(), p.getName(), p.getPrice(), p.getStock()))
+                    .toList();
+            return ResponseEntity.ok(productDTOs);
         }
         return ResponseEntity.notFound().build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(@RequestBody Product product, @PathVariable long id) {
-        Product updatedProduct = myService.updateProduct(product, id);
+    public ResponseEntity<ProductDto> updateProduct(@RequestBody ProductDto productDTO, @PathVariable long id)
+            throws NoStockException {
+        Product updatedProduct = myService.updateProduct(productDTO, id);
         if (updatedProduct != null) {
-            return ResponseEntity.ok(updatedProduct);
+            ProductDto updatedProductDTO = new ProductDto(updatedProduct.getId(), updatedProduct.getName(),
+                    updatedProduct.getPrice(), updatedProduct.getStock());
+            return ResponseEntity.ok(updatedProductDTO);
         }
         return ResponseEntity.notFound().build();
     }
