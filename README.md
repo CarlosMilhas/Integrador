@@ -1,9 +1,7 @@
 # Gestión de Productos y Pedidos - API REST
 
-API desarrollada con Spring Boot para el proyecto integrador de Talento Tech, que permite administrar un catálogo de productos y procesar pedidos.
+API desarrollada con Spring Boot que permite administrar un catálogo de productos y procesar pedidos.
 
-## Postman Link 
-https://clubsimple-team.postman.co/workspace/My-Workspace~90eb8030-5174-4836-86aa-124c7118290d/collection/37996362-e7eed5e7-6268-4b71-ba53-52235514e8a3?action=share&creator=37996362
 
 ## 📌 Características principales
 
